@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name          2chrv(2ch rich viwer)
-// @namespace     http://fuji.jottit.com/
+// @namespace     http://filmlang.org/soft/2chrv
 // @include       http://*.2ch.net/*/*/*
 // @author        Makoto Fuji
 // @version       0.1
@@ -62,6 +62,7 @@
         id: RegExp.$1,
         name: a[1],
         date: a[2],
+        show_flag: false,
         comments: [],
       };
     }
@@ -123,23 +124,24 @@
     return lst;
   }
   function obj2html(obj){
+    function blockquote(o){
+      return o.comments.length ?
+        '<blockquote>'+map(o.comments, function(comment){
+          comment.show_flag = true;
+          return obj2html(comment);
+      }).join('')+'</blockquote>' : '';
+    }
     function footer(o){
       return '<span class="footer">'+
                '<span class="id">'+o.id+'</span>. '+
                '<span class="name">'+o.name+'</span> <span class="date">'+o.date+'</span>'+
              '</span>';
     }
-    function blockquote(o){
-      return o.comments.length ? '<blockquote>'+map(o.comments, function(comment){
-        comment.show_flag = 1;
-        return obj2html(comment);
-      }).join('')+'</blockquote>' : '';
-    }
     return '<div id="x'+obj.id+'" class="les">'+
               obj.body+
               footer(obj)+
               blockquote(obj)+
-            '</div>';
+           '</div>';
   }
   function h1(){
     return '<h1>'+(document.getElementsByTagName('title')[0].innerHTML)+'</h1>';
